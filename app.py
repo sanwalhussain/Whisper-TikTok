@@ -113,6 +113,27 @@ st.set_page_config(
 )
 
 
+video_json_path = Path('video.json')  # Ensure this path is correct
+if video_json_path.exists():
+    video_json_content = json.dumps(json.load(open(video_json_path, 'r', encoding='utf-8')), indent=4)
+else:
+    video_json_content = "{}"  # Default content if the file does not exist
+
+st.subheader("Edit Video JSON")
+edited_json = st.text_area("Edit the JSON content here:", value=video_json_content, height=300)
+
+if st.button('Save JSON'):
+    try:
+        # Attempt to parse the edited JSON to ensure it's valid
+        parsed_json = json.loads(edited_json)
+        # Save the edited JSON back to video.json
+        with open(video_json_path, 'w', encoding='utf-8') as f:
+            json.dump(parsed_json, f, indent=4)
+        st.success("JSON saved successfully!")
+    except json.JSONDecodeError as e:
+        st.error(f"Error saving JSON: {e}")
+
+
 async def main():
 
     _, mid, _ = st.columns(3)
